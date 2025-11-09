@@ -26,6 +26,30 @@ interface Group {
   created_by: string
 }
 
+interface CalendarDay {
+  date: Date
+  activities: ActivityLog[]
+  isToday: boolean
+  isCurrentMonth: boolean
+}
+
+interface ActivityLog {
+  id: string
+  date: string
+  activity_type: string
+  is_active: boolean
+}
+
+type ActivityType = 'run' | 'walk' | 'gym' | 'hike' | 'bike'
+
+const ACTIVITY_TYPES: { type: ActivityType; label: string; emoji: string; color: string }[] = [
+  { type: 'run', label: 'Run', emoji: '🏃', color: 'from-red-400 to-red-600' },
+  { type: 'walk', label: 'Walk', emoji: '🚶', color: 'from-blue-400 to-blue-600' },
+  { type: 'gym', label: 'Gym', emoji: '💪', color: 'from-purple-400 to-purple-600' },
+  { type: 'hike', label: 'Hike', emoji: '🥾', color: 'from-green-400 to-green-600' },
+  { type: 'bike', label: 'Bike', emoji: '🚴', color: 'from-yellow-400 to-yellow-600' },
+]
+
 export default function GroupDetailPage() {
   const params = useParams()
   const router = useRouter()
@@ -39,10 +63,72 @@ export default function GroupDetailPage() {
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviting, setInviting] = useState(false)
   const [markedToday, setMarkedToday] = useState(false)
+  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([])
+  const [showCalendar, setShowCalendar] = useState(false)
+  const [selectedDay, setSelectedDay] = useState<Date | null>(null)
+  const [showActivityModal, setShowActivityModal] = useState(false)
+  const [selectedActivityType, setSelectedActivityType] = useState<ActivityType>('run')
 
   useEffect(() => {
     loadGroupData()
   }, [groupId])
+
+  // Generate calendar days for current month
+  function generateCalendarDays(activities: ActivityLog[]): CalendarDay[] {
+    const today = new Date()
+    const currentMonth = today.getMonth()
+    const currentYear = today.getFullYear()
+
+    // Get first day of month and how many days in month
+    const firstDay = new Date(currentYear, currentMonth, 1)
+    const lastDay = new Date(currentYear, currentMonth + 1, 0)
+    const daysInMonth = lastDay.getDate()
+
+    // Get first day of week (0 = Sunday, 1 = Monday, etc.)
+    const startingDayOfWeek = firstDay.getDay()
+
+    const days: CalendarDay[] = []
+
+    // Add empty days for previous month
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      const prevDate = new Date(currentYear, currentMonth, -startingDayOfWeek + i + 1)
+      days.push({
+        date: prevDate,
+        activities: [],
+        isToday: false,
+        isCurrentMonth: false
+      })
+    }
+
+    // Add days of current month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(currentYear, currentMonth, day)
+      const dateString = date.toISOString().split('T')[0]
+      const isToday = dateString === today.toISOString().split('T')[0]
+      const dayActivities = activities.filter(a => a.date === dateString)
+
+      days.push({
+        date,
+        activities: dayActivities,
+        isToday,
+        isCurrentMonth: true
+      })
+    }
+
+    // Add empty days for next month to complete the grid (42 days = 6 weeks)
+    const remainingDays = 42 - days.length
+    for (let i = 1; i <= remainingDays; i++) {
+      const nextDate = new Date(currentYear, currentMonth + 1, i)
+      days.push({
+        date: nextDate,
+        activities: [],
+        isToday: false,
+        isCurrentMonth: false
+      })
+    }
+
+    return days
+  }
 
   async function loadGroupData() {
     const supabase = createClient()
@@ -107,6 +193,30 @@ export default function GroupDetailPage() {
     )
 
     setMembers(membersWithStats)
+
+    // Load calendar activities for current user
+    if (user) {
+      const startOfMonth = new Date()
+      startOfMonth.setDate(1)
+      startOfMonth.setHours(0, 0, 0, 0)
+
+      const { data: userActivities } = await supabase
+        .from('activity_logs')
+        .select('id, date, activity_type, is_active')
+        .eq('user_id', user.id)
+        .eq('group_id', groupId)
+        .gte('date', startOfMonth.toISOString().split('T')[0])
+
+      const activities = userActivities || []
+      const calendar = generateCalendarDays(activities)
+      setCalendarDays(calendar)
+
+      // Check if today is marked
+      const today = new Date().toISOString().split('T')[0]
+      const todayActivity = activities.find(a => a.date === today && a.is_active)
+      setMarkedToday(!!todayActivity)
+    }
+
     setLoading(false)
   }
 
@@ -162,7 +272,7 @@ export default function GroupDetailPage() {
     }
   }
 
-  async function markActive(date: string) {
+  async function markActive(date: string, activityType: ActivityType = 'run') {
     const supabase = createClient()
 
     try {
@@ -172,7 +282,8 @@ export default function GroupDetailPage() {
           user_id: user.id,
           group_id: groupId,
           date: date,
-          is_active: true
+          is_active: true,
+          activity_type: activityType
         }], {
           onConflict: 'user_id,group_id,date'
         })
@@ -186,10 +297,29 @@ export default function GroupDetailPage() {
       })
 
       await loadGroupData()
-      alert('Day marked as active')
+
+      const activityInfo = ACTIVITY_TYPES.find(a => a.type === activityType)
+      alert(`${activityInfo?.emoji} ${activityInfo?.label} activity logged for ${date}!`)
     } catch (error: any) {
       alert('Error: ' + error.message)
     }
+  }
+
+  function handleDayClick(day: CalendarDay) {
+    if (!day.isCurrentMonth) return
+
+    setSelectedDay(day.date)
+    setShowActivityModal(true)
+  }
+
+  async function logActivity() {
+    if (!selectedDay) return
+
+    const dateString = selectedDay.toISOString().split('T')[0]
+    await markActive(dateString, selectedActivityType)
+
+    setShowActivityModal(false)
+    setSelectedDay(null)
   }
 
   if (loading) {
@@ -315,6 +445,99 @@ export default function GroupDetailPage() {
             ))}
           </div>
         </div>
+
+        {/* Calendar Toggle Button */}
+        <div className="mt-6">
+          <button
+            onClick={() => setShowCalendar(!showCalendar)}
+            className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-white hover:bg-white/20 transition-all"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="text-2xl">📅</div>
+                <div>
+                  <div className="font-semibold text-left">Activity Calendar</div>
+                  <div className="text-sm text-purple-200 text-left">Track your daily activities</div>
+                </div>
+              </div>
+              <div className="text-xl">
+                {showCalendar ? '▼' : '▶'}
+              </div>
+            </div>
+          </button>
+        </div>
+
+        {/* Calendar View */}
+        {showCalendar && (
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 mt-4">
+            <div className="text-center mb-4">
+              <h3 className="text-lg font-semibold text-white">
+                {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+              </h3>
+            </div>
+
+            {/* Calendar Header - Days of Week */}
+            <div className="grid grid-cols-7 gap-1 mb-2">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <div key={day} className="text-center text-xs font-medium text-purple-200 py-2">
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            {/* Calendar Grid */}
+            <div className="grid grid-cols-7 gap-1">
+              {calendarDays.map((day, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleDayClick(day)}
+                  disabled={!day.isCurrentMonth}
+                  className={`
+                    aspect-square flex flex-col items-center justify-center text-xs rounded-lg transition-all relative
+                    ${day.isCurrentMonth
+                      ? day.activities.length > 0
+                        ? 'bg-gradient-to-br from-green-400 to-emerald-500 text-white font-bold shadow-lg hover:scale-105'
+                        : day.isToday
+                          ? 'bg-white/20 text-white font-semibold border-2 border-white/40 hover:bg-white/30'
+                          : 'text-white hover:bg-white/10 border border-white/10'
+                      : 'text-purple-300/30 cursor-not-allowed'
+                    }
+                  `}
+                >
+                  <div className="text-sm">{day.date.getDate()}</div>
+                  {day.activities.length > 0 && (
+                    <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center">
+                      {day.activities.slice(0, 3).map((activity, i) => {
+                        const activityType = ACTIVITY_TYPES.find(a => a.type === activity.activity_type)
+                        return (
+                          <div key={i} className="text-xs opacity-90">
+                            {activityType?.emoji || '✓'}
+                          </div>
+                        )
+                      })}
+                      {day.activities.length > 3 && (
+                        <div className="text-xs opacity-70">+{day.activities.length - 3}</div>
+                      )}
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Calendar Legend */}
+            <div className="mt-4">
+              <div className="text-xs text-purple-200 mb-2 text-center">Activity Types:</div>
+              <div className="flex flex-wrap justify-center gap-2 text-xs">
+                {ACTIVITY_TYPES.map(activity => (
+                  <div key={activity.type} className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded-full">
+                    <span>{activity.emoji}</span>
+                    <span className="text-purple-200">{activity.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Invite Modal */}
@@ -392,6 +615,72 @@ export default function GroupDetailPage() {
           animation-delay: 4s;
         }
       `}</style>
+
+      {/* Activity Selection Modal */}
+      {showActivityModal && selectedDay && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl max-w-md w-full p-6">
+            <h2 className="text-xl font-semibold text-white mb-4 text-center">
+              Log Activity
+            </h2>
+            <p className="text-purple-200 text-center mb-6">
+              {selectedDay.toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </p>
+
+            {/* Activity Type Selection */}
+            <div className="space-y-3 mb-6">
+              <label className="text-sm font-medium text-purple-200">
+                Choose Activity Type:
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                {ACTIVITY_TYPES.map((activity) => (
+                  <button
+                    key={activity.type}
+                    onClick={() => setSelectedActivityType(activity.type)}
+                    className={`
+                      p-4 rounded-xl border-2 transition-all text-center
+                      ${selectedActivityType === activity.type
+                        ? 'border-white bg-white/20 text-white'
+                        : 'border-white/20 bg-white/5 text-purple-200 hover:bg-white/10'
+                      }
+                    `}
+                  >
+                    <div className="text-2xl mb-1">{activity.emoji}</div>
+                    <div className="text-sm font-medium">{activity.label}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowActivityModal(false)
+                  setSelectedDay(null)
+                }}
+                className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white hover:bg-white/20 font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={logActivity}
+                className={`
+                  flex-1 px-4 py-3 rounded-xl font-medium transition-all text-white
+                  bg-gradient-to-r ${ACTIVITY_TYPES.find(a => a.type === selectedActivityType)?.color || 'from-purple-500 to-purple-600'}
+                  hover:scale-105 shadow-lg
+                `}
+              >
+                Log {ACTIVITY_TYPES.find(a => a.type === selectedActivityType)?.emoji} {ACTIVITY_TYPES.find(a => a.type === selectedActivityType)?.label}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
