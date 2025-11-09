@@ -154,7 +154,7 @@ export default function GroupDetailPage() {
     setGroup(groupData)
 
     // Get members with their stats
-    const { data: membersData } = await supabase
+    const { data: membersData, error: membersError } = await supabase
       .from('group_members')
       .select(`
         id,
@@ -167,9 +167,42 @@ export default function GroupDetailPage() {
       `)
       .eq('group_id', groupId)
 
+    console.log('Members query result:', { membersData, membersError })
+
+    // If profiles join fails, try a simpler approach
+    let finalMembersData = membersData
+    if (!membersData || membersData.length === 0 || membersError) {
+      console.log('Trying simpler members query...')
+      const { data: simpleMembersData, error: simpleError } = await supabase
+        .from('group_members')
+        .select('id, user_id, joined_at')
+        .eq('group_id', groupId)
+
+      console.log('Simple members query:', { simpleMembersData, simpleError })
+
+      if (simpleMembersData) {
+        // Get profiles separately
+        const membersWithProfiles = await Promise.all(
+          simpleMembersData.map(async (member: any) => {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('full_name, email')
+              .eq('id', member.user_id)
+              .single()
+
+            return {
+              ...member,
+              profiles: profile || { full_name: 'Unknown', email: 'unknown@email.com' }
+            }
+          })
+        )
+        finalMembersData = membersWithProfiles
+      }
+    }
+
     // Get streaks for each member
     const membersWithStats = await Promise.all(
-      (membersData || []).map(async (member: any) => {
+      (finalMembersData || []).map(async (member: any) => {
         const { data: streak } = await supabase
           .from('streaks')
           .select('current_streak')
