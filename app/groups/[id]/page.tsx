@@ -194,8 +194,8 @@ export default function GroupDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center">
+        <div className="text-purple-200">Loading...</div>
       </div>
     )
   }
@@ -206,29 +206,33 @@ export default function GroupDetailPage() {
   const sortedMembers = [...members].sort((a, b) => (b.streak || 0) - (a.streak || 0))
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 relative overflow-hidden">
+      {/* Glassmorphism overlay effects */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-2xl mx-auto px-4 py-4">
-          <Link href="/dashboard" className="text-indigo-600 text-sm hover:text-indigo-700 mb-2 inline-block">
+      <div className="relative z-10 px-4 pt-12 pb-6">
+        <div className="max-w-2xl mx-auto">
+          <Link href="/dashboard" className="text-purple-200 text-sm hover:text-white mb-3 inline-block">
             ← Back
           </Link>
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-xl font-semibold text-gray-900">
+              <h1 className="text-2xl font-bold text-white">
                 {group.name}
               </h1>
               {group.description && (
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-purple-200 mt-1">
                   {group.description}
                 </p>
               )}
             </div>
             <div className="text-right">
-              <div className="text-lg font-semibold text-indigo-600">
+              <div className="text-lg font-bold text-yellow-300">
                 {group.prize_amount} {group.currency}
               </div>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-purple-200">
                 Prize
               </div>
             </div>
@@ -237,75 +241,72 @@ export default function GroupDetailPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-2xl mx-auto px-4 py-6">
+      <div className="relative z-10 max-w-2xl mx-auto px-4 pb-24">
 
         {/* Mark Today Button */}
-        {!markedToday && (
+        {!markedToday ? (
           <button
             onClick={async () => {
               await markActive(new Date().toISOString().split('T')[0])
               setMarkedToday(true)
             }}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-4 rounded-lg mb-4 shadow-sm transition-colors"
+            className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold py-4 rounded-2xl mb-4 shadow-lg transition-all"
           >
             ✓ Mark Today as Active
           </button>
-        )}
-
-        {markedToday && (
-          <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-4 text-sm">
+        ) : (
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-3 rounded-2xl mb-4 text-sm">
             ✓ Great! You've logged today's activity
           </div>
         )}
 
-          <button
-            onClick={() => setShowInviteModal(true)}
-            className="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 rounded-lg mb-6 shadow-sm transition-colors text-sm"
-          >
-            + Invite Member
-          </button>
-        </div>
+        <button
+          onClick={() => setShowInviteModal(true)}
+          className="w-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white font-medium py-3 rounded-2xl mb-6 transition-colors text-sm"
+        >
+          + Invite Member
+        </button>
 
-        {/* Leaderboard - Simple */}
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Leaderboard
+        {/* Leaderboard - Glassmorphism */}
+        <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-4 border border-white/20">
+          <h2 className="text-lg font-semibold text-white mb-4">
+            🏆 Leaderboard
           </h2>
 
           <div className="space-y-2">
             {sortedMembers.map((member, index) => (
               <div
                 key={member.id}
-                className={`p-3 rounded-lg ${
+                className={`p-3 rounded-xl ${
                   index === 0
-                    ? 'bg-yellow-50 border border-yellow-200'
-                    : 'bg-gray-50'
+                    ? 'bg-gradient-to-r from-yellow-400/20 to-orange-400/20 border border-yellow-400/30'
+                    : 'bg-white/5 border border-white/10'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="text-lg font-semibold text-gray-500">
+                    <div className="text-lg font-semibold text-white">
                       {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}`}
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-white">
                         {member.profiles?.full_name || 'Unknown'}
                         {member.user_id === user?.id && (
-                          <span className="ml-2 text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">
+                          <span className="ml-2 text-xs bg-purple-500/50 text-white px-2 py-0.5 rounded-full">
                             You
                           </span>
                         )}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-purple-200">
                         {member.active_days || 0} days active
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-lg font-semibold text-orange-600">
-                      {member.streak || 0}
+                    <div className="text-lg font-semibold text-orange-300">
+                      🔥 {member.streak || 0}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-purple-200">
                       streak
                     </div>
                   </div>
@@ -314,10 +315,11 @@ export default function GroupDetailPage() {
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Invite Modal - Simple */}
-        {showInviteModal && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      {/* Invite Modal - Simple */}
+      {showInviteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
         <div className="bg-white rounded-lg max-w-md w-full p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
             Invite Member
@@ -358,8 +360,38 @@ export default function GroupDetailPage() {
             </button>
           </div>
         </div>
-      </div>
-    )}
+        </div>
+      )}
+
+      {/* CSS Animations */}
+      <style jsx global>{`
+        @keyframes blob {
+          0% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          33% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+          100% {
+            transform: translate(0px, 0px) scale(1);
+          }
+        }
+
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}</style>
     </div>
   )
 }

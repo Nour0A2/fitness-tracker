@@ -175,26 +175,31 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-2">💪</div>
-          <div className="text-gray-600">Loading...</div>
+          <div className="text-purple-200">Loading...</div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Simple Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex justify-between items-center">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 relative overflow-hidden">
+      {/* Glassmorphism overlay effects */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+      <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+
+      {/* Header */}
+      <div className="relative z-10 px-4 pt-12 pb-6">
+        <div className="max-w-2xl mx-auto flex justify-between items-center">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">
-              {user?.user_metadata?.full_name || 'My Dashboard'}
+            <h1 className="text-2xl font-bold text-white">
+              {user?.user_metadata?.full_name || 'Dashboard'}
             </h1>
-            <p className="text-sm text-gray-500">
-              {stats.currentStreak > 0 ? `🔥 ${stats.currentStreak} day streak` : 'Start your streak today'}
+            <p className="text-purple-200 text-sm mt-1">
+              {stats.currentStreak > 0 ? `🔥 ${stats.currentStreak} day streak` : 'Start your journey'}
             </p>
           </div>
           <button
@@ -203,7 +208,7 @@ export default function DashboardPage() {
               supabase.auth.signOut()
               router.push('/')
             }}
-            className="text-gray-600 hover:text-gray-900 text-sm"
+            className="text-white/80 hover:text-white text-sm bg-white/10 backdrop-blur-md px-4 py-2 rounded-full"
           >
             Logout
           </button>
@@ -211,105 +216,141 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-2xl mx-auto px-4 py-6">
+      <div className="relative z-10 max-w-2xl mx-auto px-4 pb-24">
 
-        {/* Quick Stats - Simple */}
-        <div className="bg-white rounded-lg p-4 mb-4 shadow-sm">
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-gray-900">{stats.currentStreak}</div>
-              <div className="text-xs text-gray-500">Day Streak</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-gray-900">{stats.activeDaysThisMonth}</div>
-              <div className="text-xs text-gray-500">This Month</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-gray-900">{stats.groupCount}</div>
-              <div className="text-xs text-gray-500">Groups</div>
-            </div>
+        {/* Colorful Stats Cards - Grid */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          {/* Streak Card - Orange/Red Gradient */}
+          <div className="bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl p-4 shadow-lg">
+            <div className="text-white/80 text-xs font-medium mb-1">🔥 Streak</div>
+            <div className="text-white text-3xl font-bold">{stats.currentStreak}</div>
+            <div className="text-white/70 text-xs mt-1">days</div>
           </div>
+
+          {/* This Month Card - Blue/Purple Gradient */}
+          <div className="bg-gradient-to-br from-blue-400 to-purple-500 rounded-2xl p-4 shadow-lg">
+            <div className="text-white/80 text-xs font-medium mb-1">📅 This Month</div>
+            <div className="text-white text-3xl font-bold">{stats.activeDaysThisMonth}</div>
+            <div className="text-white/70 text-xs mt-1">active days</div>
+          </div>
+
+          {/* Groups Card - Green/Teal Gradient */}
+          <div className="bg-gradient-to-br from-green-400 to-teal-500 rounded-2xl p-4 shadow-lg">
+            <div className="text-white/80 text-xs font-medium mb-1">👥 Groups</div>
+            <div className="text-white text-3xl font-bold">{stats.groupCount}</div>
+            <div className="text-white/70 text-xs mt-1">joined</div>
+          </div>
+
+          {/* Mark Today Card - Pink/Purple Gradient */}
+          {!markedToday && groups.length > 0 ? (
+            <button
+              onClick={async () => {
+                await markTodayActive(groups[0].id)
+                setMarkedToday(true)
+              }}
+              className="bg-gradient-to-br from-pink-400 to-purple-500 rounded-2xl p-4 shadow-lg text-left hover:scale-105 transition-transform"
+            >
+              <div className="text-white/80 text-xs font-medium mb-1">✓ Today</div>
+              <div className="text-white text-lg font-bold">Mark Active</div>
+              <div className="text-white/70 text-xs mt-1">tap to log</div>
+            </button>
+          ) : (
+            <div className="bg-gradient-to-br from-pink-400 to-purple-500 rounded-2xl p-4 shadow-lg">
+              <div className="text-white/80 text-xs font-medium mb-1">✓ Today</div>
+              <div className="text-white text-lg font-bold">Logged!</div>
+              <div className="text-white/70 text-xs mt-1">great job</div>
+            </div>
+          )}
         </div>
 
-        {/* Mark Today Button - Prominent */}
-        {!markedToday && groups.length > 0 && (
-          <button
-            onClick={async () => {
-              await markTodayActive(groups[0].id)
-              setMarkedToday(true)
-            }}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-4 rounded-lg mb-4 shadow-sm transition-colors"
-          >
-            ✓ Mark Today as Active
-          </button>
-        )}
-
-        {markedToday && (
-          <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mb-4 text-sm">
-            ✓ Great! You've logged today's activity
-          </div>
-        )}
-
-        {/* Groups List - Clean & Simple */}
+        {/* Groups List - Glassmorphism */}
         <div className="space-y-3">
           <div className="flex justify-between items-center mb-3">
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-white">
               My Groups
             </h2>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+              className="bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-white/30 transition-colors"
             >
-              + New Group
+              + New
             </button>
           </div>
 
           {groups.length > 0 ? (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {groups.map((group) => (
                 <Link
                   key={group.id}
                   href={`/groups/${group.id}`}
-                  className="block bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow border border-gray-200"
+                  className="block bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all"
                 >
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">{group.name}</h3>
+                      <h3 className="font-semibold text-white">{group.name}</h3>
                       {group.description && (
-                        <p className="text-sm text-gray-500 mt-1">{group.description}</p>
+                        <p className="text-sm text-purple-200 mt-1">{group.description}</p>
                       )}
                     </div>
                     <div className="text-right ml-4">
-                      <div className="text-sm font-medium text-indigo-600">
+                      <div className="text-sm font-bold text-yellow-300">
                         {group.prize_amount} {group.currency}
                       </div>
-                      <div className="text-xs text-gray-500">prize</div>
+                      <div className="text-xs text-purple-200">prize</div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>{group.member_count || 0} members</span>
-                    <span className="text-indigo-600">View →</span>
+                  <div className="flex items-center justify-between text-xs text-purple-200">
+                    <span>👥 {group.member_count || 0} members</span>
+                    <span className="text-white">View →</span>
                   </div>
                 </Link>
               ))}
             </div>
           ) : (
-            <div className="bg-white rounded-lg p-8 text-center shadow-sm">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 text-center border border-white/20">
               <div className="text-4xl mb-3">💪</div>
-              <h3 className="font-semibold text-gray-900 mb-2">
+              <h3 className="font-semibold text-white mb-2">
                 No groups yet
               </h3>
-              <p className="text-sm text-gray-500 mb-4">
+              <p className="text-sm text-purple-200 mb-4">
                 Create a group to start tracking with friends
               </p>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-6 rounded-lg text-sm transition-colors"
+                className="bg-white/20 backdrop-blur-md hover:bg-white/30 text-white font-medium py-2 px-6 rounded-full text-sm transition-colors"
               >
                 Create Group
               </button>
             </div>
           )}
+        </div>
+
+        {/* Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white/10 backdrop-blur-xl border-t border-white/20 z-20">
+          <div className="max-w-2xl mx-auto px-4 py-3 flex justify-around items-center">
+            <button className="flex flex-col items-center gap-1 text-white">
+              <div className="text-xl">🏠</div>
+              <div className="text-xs font-medium">Home</div>
+            </button>
+            <button className="flex flex-col items-center gap-1 text-white/50">
+              <div className="text-xl">📊</div>
+              <div className="text-xs">Stats</div>
+            </button>
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="flex flex-col items-center gap-1 bg-white/20 backdrop-blur-md px-6 py-2 rounded-full -mt-6"
+            >
+              <div className="text-2xl">➕</div>
+            </button>
+            <button className="flex flex-col items-center gap-1 text-white/50">
+              <div className="text-xl">👥</div>
+              <div className="text-xs">Groups</div>
+            </button>
+            <button className="flex flex-col items-center gap-1 text-white/50">
+              <div className="text-xl">⚙️</div>
+              <div className="text-xs">Settings</div>
+            </button>
+          </div>
         </div>
 
         {/* Create Group Modal - Simple */}
@@ -386,6 +427,36 @@ export default function DashboardPage() {
       </div>
     )}
       </div>
+
+      {/* CSS Animations */}
+      <style jsx global>{`
+        @keyframes blob {
+          0% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          33% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+          100% {
+            transform: translate(0px, 0px) scale(1);
+          }
+        }
+
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}</style>
     </div>
   )
 }
