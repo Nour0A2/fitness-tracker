@@ -167,7 +167,7 @@ export default function DashboardPage() {
 
       // Reload data
       await loadDashboardData()
-      alert('✅ Day marked as active!')
+      alert('Day marked as active')
     } catch (error: any) {
       alert('Error: ' + error.message)
     }
@@ -177,7 +177,6 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-4xl mb-2">💪</div>
           <div className="text-purple-200">Loading...</div>
         </div>
       </div>
@@ -199,7 +198,7 @@ export default function DashboardPage() {
               {user?.user_metadata?.full_name || 'Dashboard'}
             </h1>
             <p className="text-purple-200 text-sm mt-1">
-              {stats.currentStreak > 0 ? `🔥 ${stats.currentStreak} day streak` : 'Start your journey'}
+              {stats.currentStreak > 0 ? `${stats.currentStreak} day streak` : 'Track your progress'}
             </p>
           </div>
           <button
@@ -222,21 +221,21 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 gap-3 mb-4">
           {/* Streak Card - Orange/Red Gradient */}
           <div className="bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl p-4 shadow-lg">
-            <div className="text-white/80 text-xs font-medium mb-1">🔥 Streak</div>
+            <div className="text-white/80 text-xs font-medium mb-1">Streak</div>
             <div className="text-white text-3xl font-bold">{stats.currentStreak}</div>
             <div className="text-white/70 text-xs mt-1">days</div>
           </div>
 
           {/* This Month Card - Blue/Purple Gradient */}
           <div className="bg-gradient-to-br from-blue-400 to-purple-500 rounded-2xl p-4 shadow-lg">
-            <div className="text-white/80 text-xs font-medium mb-1">📅 This Month</div>
+            <div className="text-white/80 text-xs font-medium mb-1">This Month</div>
             <div className="text-white text-3xl font-bold">{stats.activeDaysThisMonth}</div>
             <div className="text-white/70 text-xs mt-1">active days</div>
           </div>
 
           {/* Groups Card - Green/Teal Gradient */}
           <div className="bg-gradient-to-br from-green-400 to-teal-500 rounded-2xl p-4 shadow-lg">
-            <div className="text-white/80 text-xs font-medium mb-1">👥 Groups</div>
+            <div className="text-white/80 text-xs font-medium mb-1">Groups</div>
             <div className="text-white text-3xl font-bold">{stats.groupCount}</div>
             <div className="text-white/70 text-xs mt-1">joined</div>
           </div>
@@ -250,15 +249,15 @@ export default function DashboardPage() {
               }}
               className="bg-gradient-to-br from-pink-400 to-purple-500 rounded-2xl p-4 shadow-lg text-left hover:scale-105 transition-transform"
             >
-              <div className="text-white/80 text-xs font-medium mb-1">✓ Today</div>
+              <div className="text-white/80 text-xs font-medium mb-1">Today</div>
               <div className="text-white text-lg font-bold">Mark Active</div>
               <div className="text-white/70 text-xs mt-1">tap to log</div>
             </button>
           ) : (
             <div className="bg-gradient-to-br from-pink-400 to-purple-500 rounded-2xl p-4 shadow-lg">
-              <div className="text-white/80 text-xs font-medium mb-1">✓ Today</div>
-              <div className="text-white text-lg font-bold">Logged!</div>
-              <div className="text-white/70 text-xs mt-1">great job</div>
+              <div className="text-white/80 text-xs font-medium mb-1">Today</div>
+              <div className="text-white text-lg font-bold">Logged</div>
+              <div className="text-white/70 text-xs mt-1">completed</div>
             </div>
           )}
         </div>
@@ -300,7 +299,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-xs text-purple-200">
-                    <span>👥 {group.member_count || 0} members</span>
+                    <span>{group.member_count || 0} members</span>
                     <span className="text-white">View →</span>
                   </div>
                 </Link>
@@ -308,12 +307,11 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 text-center border border-white/20">
-              <div className="text-4xl mb-3">💪</div>
               <h3 className="font-semibold text-white mb-2">
                 No groups yet
               </h3>
               <p className="text-sm text-purple-200 mb-4">
-                Create a group to start tracking with friends
+                Create a group to start tracking
               </p>
               <button
                 onClick={() => setShowCreateModal(true)}
@@ -329,25 +327,25 @@ export default function DashboardPage() {
         <div className="fixed bottom-0 left-0 right-0 bg-white/10 backdrop-blur-xl border-t border-white/20 z-20">
           <div className="max-w-2xl mx-auto px-4 py-3 flex justify-around items-center">
             <button className="flex flex-col items-center gap-1 text-white">
-              <div className="text-xl">🏠</div>
+              <div className="text-xl">⌂</div>
               <div className="text-xs font-medium">Home</div>
             </button>
             <button className="flex flex-col items-center gap-1 text-white/50">
-              <div className="text-xl">📊</div>
+              <div className="text-xl">◐</div>
               <div className="text-xs">Stats</div>
             </button>
             <button
               onClick={() => setShowCreateModal(true)}
               className="flex flex-col items-center gap-1 bg-white/20 backdrop-blur-md px-6 py-2 rounded-full -mt-6"
             >
-              <div className="text-2xl">➕</div>
+              <div className="text-2xl">+</div>
             </button>
             <button className="flex flex-col items-center gap-1 text-white/50">
-              <div className="text-xl">👥</div>
+              <div className="text-xl">◉</div>
               <div className="text-xs">Groups</div>
             </button>
             <button className="flex flex-col items-center gap-1 text-white/50">
-              <div className="text-xl">⚙️</div>
+              <div className="text-xl">⚙</div>
               <div className="text-xs">Settings</div>
             </button>
           </div>
@@ -358,7 +356,7 @@ export default function DashboardPage() {
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl max-w-md w-full p-6">
           <h2 className="text-xl font-semibold text-white mb-4">
-            Create New Group 🎯
+            Create New Group
           </h2>
 
           <div className="space-y-4 mb-6">

@@ -106,10 +106,10 @@ export default function SignupPage() {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">
-            Join the Challenge! 💪
+            Sign Up
           </h1>
           <p className="text-purple-200">
-            Just email & password - that's it!
+            Create your account
           </p>
         </div>
 
@@ -160,7 +160,7 @@ export default function SignupPage() {
               disabled={loading}
               className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 disabled:opacity-50 text-white font-semibold py-3 px-4 rounded-xl transition-all"
             >
-              {loading ? 'Creating account...' : 'Sign Up 🚀'}
+              {loading ? 'Creating account...' : 'Sign Up'}
             </button>
           </form>
 

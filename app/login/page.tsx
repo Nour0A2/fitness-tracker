@@ -63,10 +63,10 @@ export default function LoginPage() {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">
-            Welcome Back! 💪
+            Login
           </h1>
           <p className="text-purple-200">
-            Login to continue your journey
+            Continue to your account
           </p>
         </div>
 
@@ -113,7 +113,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 disabled:opacity-50 text-white font-semibold py-3 px-4 rounded-xl transition-all"
             >
-              {loading ? 'Logging in...' : 'Login 🚀'}
+              {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
 

@@ -137,7 +137,7 @@ export default function GroupDetailPage() {
           }])
 
         if (error) throw error
-        alert(`✅ ${inviteEmail} added to the group!`)
+        alert(`${inviteEmail} added to the group`)
       } else {
         // User doesn't exist, create invitation
         const { error } = await supabase
@@ -149,7 +149,7 @@ export default function GroupDetailPage() {
           }])
 
         if (error) throw error
-        alert(`📧 Invitation sent to ${inviteEmail}!\n\nThey'll receive an email to join the group.`)
+        alert(`Invitation sent to ${inviteEmail}`)
       }
 
       setInviteEmail('')
@@ -186,7 +186,7 @@ export default function GroupDetailPage() {
       })
 
       await loadGroupData()
-      alert('✅ Day marked as active!')
+      alert('Day marked as active')
     } catch (error: any) {
       alert('Error: ' + error.message)
     }
@@ -286,7 +286,7 @@ export default function GroupDetailPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="text-lg font-semibold text-white">
-                      {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}`}
+                      {index + 1}
                     </div>
                     <div>
                       <div className="font-medium text-white">
@@ -322,7 +322,7 @@ export default function GroupDetailPage() {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl max-w-md w-full p-6">
           <h2 className="text-xl font-semibold text-white mb-4">
-            Invite Member 📧
+            Invite Member
           </h2>
 
           <div className="mb-6">
