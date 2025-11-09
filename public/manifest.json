@@ -1,0 +1,19 @@
+{
+  "name": "Fitness Tracker - Stay Consistent",
+  "short_name": "FitTracker",
+  "description": "Track your fitness journey with friends and family. Build streaks, compete, and win!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#9333ea",
+  "theme_color": "#9333ea",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon?<generated>",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Icons</title>
+</head>
+<body>
+    <canvas id="canvas192" width="192" height="192"></canvas>
+    <canvas id="canvas512" width="512" height="512"></canvas>
+    <br>
+    <a id="download192" download="icon-192.png">Download 192x192</a>
+    <br>
+    <a id="download512" download="icon-512.png">Download 512x512</a>
+
+    <script>
+        function generateIcon(canvasId, size, downloadId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#9333ea');
+            gradient.addColorStop(0.5, '#ec4899');
+            gradient.addColorStop(1, '#ef4444');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Add emoji
+            ctx.font = `${size * 0.6}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('💪', size / 2, size / 2);
+            
+            // Create download link
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                document.getElementById(downloadId).href = url;
+            });
+        }
+        
+        generateIcon('canvas192', 192, 'download192');
+        generateIcon('canvas512', 512, 'download512');
+    </script>
+</body>
+</html>
+
