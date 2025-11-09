@@ -49,6 +49,66 @@ export default function LoginPage() {
 
       if (error) throw error
 
+      // Check for pending invitations and auto-join groups
+      if (data.user) {
+        console.log('Checking for pending invitations for:', email)
+        const { data: invitations, error: inviteError } = await supabase
+          .from('invitations')
+          .select('group_id')
+          .eq('email', email.toLowerCase())
+          .is('used_at', null)
+
+        if (inviteError) {
+          console.error('Error checking invitations:', inviteError)
+        } else if (invitations && invitations.length > 0) {
+          console.log('Found pending invitations:', invitations)
+
+          // Join all groups the user was invited to
+          for (const invitation of invitations) {
+            try {
+              // Check if user is already a member
+              const { data: existingMember } = await supabase
+                .from('group_members')
+                .select('id')
+                .eq('group_id', invitation.group_id)
+                .eq('user_id', data.user.id)
+                .single()
+
+              if (!existingMember) {
+                const { error: joinError } = await supabase
+                  .from('group_members')
+                  .insert([{
+                    group_id: invitation.group_id,
+                    user_id: data.user.id
+                  }])
+
+                if (joinError) {
+                  console.error('Error joining group:', joinError)
+                } else {
+                  console.log('Successfully joined group:', invitation.group_id)
+
+                  // Mark invitation as used
+                  await supabase
+                    .from('invitations')
+                    .update({ used_at: new Date().toISOString() })
+                    .eq('group_id', invitation.group_id)
+                    .eq('email', email.toLowerCase())
+                }
+              } else {
+                // Already a member, just mark invitation as used
+                await supabase
+                  .from('invitations')
+                  .update({ used_at: new Date().toISOString() })
+                  .eq('group_id', invitation.group_id)
+                  .eq('email', email.toLowerCase())
+              }
+            } catch (err) {
+              console.error('Error processing invitation:', err)
+            }
+          }
+        }
+      }
+
       router.push('/dashboard')
       router.refresh()
     } catch (err: any) {
