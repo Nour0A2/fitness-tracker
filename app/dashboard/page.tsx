@@ -21,6 +21,13 @@ interface Stats {
   activeDaysThisMonth: number
 }
 
+interface CalendarDay {
+  date: Date
+  isActive: boolean
+  isToday: boolean
+  isCurrentMonth: boolean
+}
+
 export default function DashboardPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
@@ -31,10 +38,69 @@ export default function DashboardPage() {
   const [newGroup, setNewGroup] = useState({ name: '', description: '', prizeAmount: 5 })
   const [creating, setCreating] = useState(false)
   const [markedToday, setMarkedToday] = useState(false)
+  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([])
+  const [showCalendar, setShowCalendar] = useState(false)
 
   useEffect(() => {
     loadDashboardData()
   }, [])
+
+  // Generate calendar days for current month
+  function generateCalendarDays(activeDates: string[]): CalendarDay[] {
+    const today = new Date()
+    const currentMonth = today.getMonth()
+    const currentYear = today.getFullYear()
+
+    // Get first day of month and how many days in month
+    const firstDay = new Date(currentYear, currentMonth, 1)
+    const lastDay = new Date(currentYear, currentMonth + 1, 0)
+    const daysInMonth = lastDay.getDate()
+
+    // Get first day of week (0 = Sunday, 1 = Monday, etc.)
+    const startingDayOfWeek = firstDay.getDay()
+
+    const days: CalendarDay[] = []
+
+    // Add empty days for previous month
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      const prevDate = new Date(currentYear, currentMonth, -startingDayOfWeek + i + 1)
+      days.push({
+        date: prevDate,
+        isActive: false,
+        isToday: false,
+        isCurrentMonth: false
+      })
+    }
+
+    // Add days of current month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(currentYear, currentMonth, day)
+      const dateString = date.toISOString().split('T')[0]
+      const isToday = dateString === today.toISOString().split('T')[0]
+      const isActive = activeDates.includes(dateString)
+
+      days.push({
+        date,
+        isActive,
+        isToday,
+        isCurrentMonth: true
+      })
+    }
+
+    // Add empty days for next month to complete the grid (42 days = 6 weeks)
+    const remainingDays = 42 - days.length
+    for (let i = 1; i <= remainingDays; i++) {
+      const nextDate = new Date(currentYear, currentMonth + 1, i)
+      days.push({
+        date: nextDate,
+        isActive: false,
+        isToday: false,
+        isCurrentMonth: false
+      })
+    }
+
+    return days
+  }
 
   async function loadDashboardData() {
     const supabase = createClient()
@@ -82,6 +148,11 @@ export default function DashboardPage() {
         .gte('date', startOfMonth.toISOString().split('T')[0])
 
       activeDays = activities?.length || 0
+
+      // Generate calendar with all active dates for current month
+      const activeDates = activities?.map(a => a.date) || []
+      const calendar = generateCalendarDays(activeDates)
+      setCalendarDays(calendar)
     }
 
     setStats({
@@ -262,6 +333,81 @@ export default function DashboardPage() {
           )}
         </div>
 
+        {/* Calendar Toggle Button */}
+        <div className="mb-4">
+          <button
+            onClick={() => setShowCalendar(!showCalendar)}
+            className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-white hover:bg-white/20 transition-all"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="text-2xl">📅</div>
+                <div>
+                  <div className="font-semibold text-left">Monthly Calendar</div>
+                  <div className="text-sm text-purple-200 text-left">View your active days</div>
+                </div>
+              </div>
+              <div className="text-xl">
+                {showCalendar ? '▼' : '▶'}
+              </div>
+            </div>
+          </button>
+        </div>
+
+        {/* Calendar View */}
+        {showCalendar && (
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 mb-6">
+            <div className="text-center mb-4">
+              <h3 className="text-lg font-semibold text-white">
+                {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+              </h3>
+            </div>
+
+            {/* Calendar Header - Days of Week */}
+            <div className="grid grid-cols-7 gap-1 mb-2">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <div key={day} className="text-center text-xs font-medium text-purple-200 py-2">
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            {/* Calendar Grid */}
+            <div className="grid grid-cols-7 gap-1">
+              {calendarDays.map((day, index) => (
+                <div
+                  key={index}
+                  className={`
+                    aspect-square flex items-center justify-center text-sm rounded-lg transition-all
+                    ${day.isCurrentMonth
+                      ? day.isActive
+                        ? 'bg-gradient-to-br from-green-400 to-emerald-500 text-white font-bold shadow-lg'
+                        : day.isToday
+                          ? 'bg-white/20 text-white font-semibold border-2 border-white/40'
+                          : 'text-white hover:bg-white/10'
+                      : 'text-purple-300/50'
+                    }
+                  `}
+                >
+                  {day.date.getDate()}
+                </div>
+              ))}
+            </div>
+
+            {/* Calendar Legend */}
+            <div className="flex justify-center gap-4 mt-4 text-xs">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-gradient-to-br from-green-400 to-emerald-500 rounded"></div>
+                <span className="text-purple-200">Active Day</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-white/20 border-2 border-white/40 rounded"></div>
+                <span className="text-purple-200">Today</span>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Groups List - Glassmorphism */}
         <div className="space-y-3">
           <div className="flex justify-between items-center mb-3">
@@ -330,9 +476,12 @@ export default function DashboardPage() {
               <div className="text-xl">⌂</div>
               <div className="text-xs font-medium">Home</div>
             </button>
-            <button className="flex flex-col items-center gap-1 text-white/50">
+            <button
+              onClick={() => setShowCalendar(!showCalendar)}
+              className={`flex flex-col items-center gap-1 ${showCalendar ? 'text-white' : 'text-white/50'}`}
+            >
               <div className="text-xl">◐</div>
-              <div className="text-xs">Stats</div>
+              <div className="text-xs">Calendar</div>
             </button>
             <button
               onClick={() => setShowCreateModal(true)}
