@@ -317,16 +317,16 @@ export default function GroupDetailPage() {
         </div>
       </div>
 
-      {/* Invite Modal - Simple */}
+      {/* Invite Modal */}
       {showInviteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-lg max-w-md w-full p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Invite Member
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl max-w-md w-full p-6">
+          <h2 className="text-xl font-semibold text-white mb-4">
+            Invite Member 📧
           </h2>
 
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Email Address
             </label>
             <input
@@ -334,11 +334,11 @@ export default function GroupDetailPage() {
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
               placeholder="friend@example.com"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-purple-300 focus:ring-2 focus:ring-purple-400 focus:border-transparent"
               autoFocus
               onKeyPress={(e) => e.key === 'Enter' && inviteMember()}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-purple-200 mt-1">
               They'll receive an invitation to join this group
             </p>
           </div>
@@ -347,14 +347,14 @@ export default function GroupDetailPage() {
             <button
               onClick={() => setShowInviteModal(false)}
               disabled={inviting}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+              className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white hover:bg-white/20 font-medium transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={inviteMember}
               disabled={inviting || !inviteEmail.trim()}
-              className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white rounded-lg font-medium transition-colors"
+              className="flex-1 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 disabled:opacity-50 text-white rounded-xl font-medium transition-all"
             >
               {inviting ? 'Sending...' : 'Send Invite'}
             </button>

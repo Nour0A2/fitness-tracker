@@ -353,17 +353,17 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Create Group Modal - Simple */}
+        {/* Create Group Modal */}
         {showCreateModal && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-lg max-w-md w-full p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Create New Group
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl max-w-md w-full p-6">
+          <h2 className="text-xl font-semibold text-white mb-4">
+            Create New Group 🎯
           </h2>
 
           <div className="space-y-4 mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-white mb-1">
                 Group Name
               </label>
               <input
@@ -371,13 +371,13 @@ export default function DashboardPage() {
                 value={newGroup.name}
                 onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })}
                 placeholder="e.g., Family Fitness"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-purple-300 focus:ring-2 focus:ring-purple-400 focus:border-transparent"
                 autoFocus
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-white mb-1">
                 Description (optional)
               </label>
               <textarea
@@ -385,12 +385,12 @@ export default function DashboardPage() {
                 onChange={(e) => setNewGroup({ ...newGroup, description: e.target.value })}
                 placeholder="What's this group about?"
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-purple-300 focus:ring-2 focus:ring-purple-400 focus:border-transparent resize-none"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-white mb-1">
                 Prize Amount (DT)
               </label>
               <input
@@ -399,9 +399,9 @@ export default function DashboardPage() {
                 onChange={(e) => setNewGroup({ ...newGroup, prizeAmount: parseFloat(e.target.value) || 0 })}
                 min="0"
                 step="0.5"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-purple-300 focus:ring-2 focus:ring-purple-400 focus:border-transparent"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-purple-200 mt-1">
                 Each member contributes this amount
               </p>
             </div>
@@ -411,14 +411,14 @@ export default function DashboardPage() {
             <button
               onClick={() => setShowCreateModal(false)}
               disabled={creating}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+              className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white hover:bg-white/20 font-medium transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={createGroup}
               disabled={creating || !newGroup.name.trim()}
-              className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white rounded-lg font-medium transition-colors"
+              className="flex-1 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 disabled:opacity-50 text-white rounded-xl font-medium transition-all"
             >
               {creating ? 'Creating...' : 'Create'}
             </button>
