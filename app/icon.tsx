@@ -15,7 +15,7 @@ export default function Icon() {
       <div
         style={{
           fontSize: 256,
-          background: 'linear-gradient(135deg, #9333ea 0%, #ec4899 50%, #ef4444 100%)',
+          background: 'linear-gradient(135deg, #f97316 0%, #ef4444 100%)',
           width: '100%',
           height: '100%',
           display: 'flex',
@@ -24,7 +24,7 @@ export default function Icon() {
           borderRadius: '20%',
         }}
       >
-        💪
+        ⚡
       </div>
     ),
     {

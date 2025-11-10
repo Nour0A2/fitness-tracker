@@ -199,10 +199,19 @@ export default function DashboardPage() {
 
       if (memberError) throw memberError
 
-      // Reload data
-      await loadDashboardData()
+      // Initialize streak
+      await supabase
+        .from('streaks')
+        .insert([{
+          user_id: user.id,
+          group_id: group.id,
+          current_streak: 0,
+          longest_streak: 0
+        }])
+
       setShowCreateModal(false)
       setNewGroup({ name: '', description: '', prizeAmount: 5 })
+      await loadDashboardData()
     } catch (error: any) {
       alert('Error creating group: ' + error.message)
     } finally {
@@ -210,401 +219,274 @@ export default function DashboardPage() {
     }
   }
 
-  async function markTodayActive(groupId: string) {
+  async function handleLogout() {
     const supabase = createClient()
-    const today = new Date().toISOString().split('T')[0]
-
-    try {
-      // Insert or update activity log
-      const { error } = await supabase
-        .from('activity_logs')
-        .upsert([{
-          user_id: user.id,
-          group_id: groupId,
-          date: today,
-          is_active: true
-        }], {
-          onConflict: 'user_id,group_id,date'
-        })
-
-      if (error) throw error
-
-      // Update streak
-      await supabase.rpc('update_user_streak', {
-        p_user_id: user.id,
-        p_group_id: groupId,
-        p_date: today
-      })
-
-      // Reload data
-      await loadDashboardData()
-      alert('Day marked as active')
-    } catch (error: any) {
-      alert('Error: ' + error.message)
-    }
+    await supabase.auth.signOut()
+    router.push('/login')
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-purple-200">Loading...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+          <div className="text-gray-600 mt-4">Loading...</div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 relative overflow-hidden">
-      {/* Glassmorphism overlay effects */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-      <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-      <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
-
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="relative z-10 px-4 pt-12 pb-6">
-        <div className="max-w-2xl mx-auto flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-white">
-              {user?.user_metadata?.full_name || 'Dashboard'}
-            </h1>
-            <p className="text-purple-200 text-sm mt-1">
-              {stats.currentStreak > 0 ? `${stats.currentStreak} day streak` : 'Track your progress'}
-            </p>
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between max-w-6xl mx-auto">
+            <div className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-md">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <span className="text-xl font-bold text-gray-900">FitTrack</span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="text-gray-600 hover:text-gray-900 font-medium text-sm transition-colors"
+            >
+              Sign out
+            </button>
           </div>
-          <button
-            onClick={() => {
-              const supabase = createClient()
-              supabase.auth.signOut()
-              router.push('/')
-            }}
-            className="text-white/80 hover:text-white text-sm bg-white/10 backdrop-blur-md px-4 py-2 rounded-full"
-          >
-            Logout
-          </button>
         </div>
-      </div>
+      </header>
 
       {/* Main Content */}
-      <div className="relative z-10 max-w-2xl mx-auto px-4 pb-24">
-
-        {/* Colorful Stats Cards - Grid */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          {/* Streak Card - Orange/Red Gradient */}
-          <div className="bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl p-4 shadow-lg">
-            <div className="text-white/80 text-xs font-medium mb-1">Streak</div>
-            <div className="text-white text-3xl font-bold">{stats.currentStreak}</div>
-            <div className="text-white/70 text-xs mt-1">days</div>
-          </div>
-
-          {/* This Month Card - Blue/Purple Gradient */}
-          <div className="bg-gradient-to-br from-blue-400 to-purple-500 rounded-2xl p-4 shadow-lg">
-            <div className="text-white/80 text-xs font-medium mb-1">This Month</div>
-            <div className="text-white text-3xl font-bold">{stats.activeDaysThisMonth}</div>
-            <div className="text-white/70 text-xs mt-1">active days</div>
-          </div>
-
-          {/* Groups Card - Green/Teal Gradient */}
-          <div className="bg-gradient-to-br from-green-400 to-teal-500 rounded-2xl p-4 shadow-lg">
-            <div className="text-white/80 text-xs font-medium mb-1">Groups</div>
-            <div className="text-white text-3xl font-bold">{stats.groupCount}</div>
-            <div className="text-white/70 text-xs mt-1">joined</div>
-          </div>
-
-          {/* Mark Today Card - Pink/Purple Gradient */}
-          {!markedToday && groups.length > 0 ? (
-            <button
-              onClick={async () => {
-                await markTodayActive(groups[0].id)
-                setMarkedToday(true)
-              }}
-              className="bg-gradient-to-br from-pink-400 to-purple-500 rounded-2xl p-4 shadow-lg text-left hover:scale-105 transition-transform"
-            >
-              <div className="text-white/80 text-xs font-medium mb-1">Today</div>
-              <div className="text-white text-lg font-bold">Mark Active</div>
-              <div className="text-white/70 text-xs mt-1">tap to log</div>
-            </button>
-          ) : (
-            <div className="bg-gradient-to-br from-pink-400 to-purple-500 rounded-2xl p-4 shadow-lg">
-              <div className="text-white/80 text-xs font-medium mb-1">Today</div>
-              <div className="text-white text-lg font-bold">Logged</div>
-              <div className="text-white/70 text-xs mt-1">completed</div>
-            </div>
-          )}
+      <main className="max-w-6xl mx-auto px-6 py-8">
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Welcome back!
+          </h1>
+          <p className="text-gray-600">
+            {user?.email}
+          </p>
         </div>
 
-        {/* Calendar Toggle Button */}
-        <div className="mb-4">
-          <button
-            onClick={() => setShowCalendar(!showCalendar)}
-            className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-white hover:bg-white/20 transition-all"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="text-2xl">📅</div>
-                <div>
-                  <div className="font-semibold text-left">Monthly Calendar</div>
-                  <div className="text-sm text-purple-200 text-left">View your active days</div>
-                </div>
-              </div>
-              <div className="text-xl">
-                {showCalendar ? '▼' : '▶'}
-              </div>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-3 gap-4 mb-8">
+          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-2xl">🔥</span>
             </div>
-          </button>
+            <div className="text-3xl font-bold text-gray-900 mb-1">{stats.currentStreak}</div>
+            <div className="text-sm text-gray-600">Day Streak</div>
+          </div>
+
+          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-2xl">📅</span>
+            </div>
+            <div className="text-3xl font-bold text-gray-900 mb-1">{stats.activeDaysThisMonth}</div>
+            <div className="text-sm text-gray-600">Active Days</div>
+          </div>
+
+          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-2xl">👥</span>
+            </div>
+            <div className="text-3xl font-bold text-gray-900 mb-1">{stats.groupCount}</div>
+            <div className="text-sm text-gray-600">Groups</div>
+          </div>
         </div>
 
-        {/* Calendar View */}
-        {showCalendar && (
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 mb-6">
-            <div className="text-center mb-4">
-              <h3 className="text-lg font-semibold text-white">
-                {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-              </h3>
+        {/* Calendar Card */}
+        {calendarDays.length > 0 && (
+          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold text-gray-900">Your Activity</h2>
+              <button
+                onClick={() => setShowCalendar(!showCalendar)}
+                className="text-sm text-orange-600 hover:text-orange-700 font-medium"
+              >
+                {showCalendar ? 'Hide' : 'View'} Calendar
+              </button>
             </div>
 
-            {/* Calendar Header - Days of Week */}
-            <div className="grid grid-cols-7 gap-1 mb-2">
-              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                <div key={day} className="text-center text-xs font-medium text-purple-200 py-2">
-                  {day}
+            {showCalendar && (
+              <div>
+                <div className="grid grid-cols-7 gap-2 mb-2">
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                    <div key={day} className="text-center text-xs font-medium text-gray-500 py-2">
+                      {day}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-
-            {/* Calendar Grid */}
-            <div className="grid grid-cols-7 gap-1">
-              {calendarDays.map((day, index) => (
-                <div
-                  key={index}
-                  className={`
-                    aspect-square flex items-center justify-center text-sm rounded-lg transition-all
-                    ${day.isCurrentMonth
-                      ? day.isActive
-                        ? 'bg-gradient-to-br from-green-400 to-emerald-500 text-white font-bold shadow-lg'
-                        : day.isToday
-                          ? 'bg-white/20 text-white font-semibold border-2 border-white/40'
-                          : 'text-white hover:bg-white/10'
-                      : 'text-purple-300/50'
-                    }
-                  `}
-                >
-                  {day.date.getDate()}
+                <div className="grid grid-cols-7 gap-2">
+                  {calendarDays.map((day, index) => (
+                    <div
+                      key={index}
+                      className={`
+                        aspect-square rounded-xl flex items-center justify-center text-sm font-medium
+                        ${!day.isCurrentMonth ? 'text-gray-300' : 
+                          day.isActive ? 'bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-md' :
+                          day.isToday ? 'bg-gray-100 text-gray-900 ring-2 ring-orange-500' :
+                          'bg-gray-50 text-gray-700'}
+                      `}
+                    >
+                      {day.date.getDate()}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-
-            {/* Calendar Legend */}
-            <div className="flex justify-center gap-4 mt-4 text-xs">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-gradient-to-br from-green-400 to-emerald-500 rounded"></div>
-                <span className="text-purple-200">Active Day</span>
+                <div className="flex items-center gap-6 mt-6 text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-gradient-to-br from-orange-500 to-red-500 rounded"></div>
+                    <span className="text-gray-600">Active Day</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-gray-100 ring-2 ring-orange-500 rounded"></div>
+                    <span className="text-gray-600">Today</span>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-white/20 border-2 border-white/40 rounded"></div>
-                <span className="text-purple-200">Today</span>
-              </div>
-            </div>
+            )}
           </div>
         )}
 
-        {/* Groups List - Glassmorphism */}
-        <div className="space-y-3">
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="text-lg font-semibold text-white">
-              My Groups
-            </h2>
+        {/* Groups Section */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Your Groups</h2>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-white/30 transition-colors"
+              className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
             >
-              + New
+              + New Group
             </button>
           </div>
 
-          {groups.length > 0 ? (
-            <div className="space-y-3">
-              {groups.map((group) => (
-                <Link
-                  key={group.id}
-                  href={`/groups/${group.id}`}
-                  className="block bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-white">{group.name}</h3>
-                      {group.description && (
-                        <p className="text-sm text-purple-200 mt-1">{group.description}</p>
-                      )}
-                    </div>
-                    <div className="text-right ml-4">
-                      <div className="text-sm font-bold text-yellow-300">
-                        {group.prize_amount} {group.currency}
-                      </div>
-                      <div className="text-xs text-purple-200">prize</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between text-xs text-purple-200">
-                    <span>{group.member_count || 0} members</span>
-                    <span className="text-white">View →</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 text-center border border-white/20">
-              <h3 className="font-semibold text-white mb-2">
-                No groups yet
-              </h3>
-              <p className="text-sm text-purple-200 mb-4">
-                Create a group to start tracking
+          {groups.length === 0 ? (
+            <div className="bg-white rounded-2xl p-12 border border-gray-100 shadow-sm text-center">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No groups yet</h3>
+              <p className="text-gray-600 mb-6">
+                Create your first group to start tracking with friends
               </p>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="bg-white/20 backdrop-blur-md hover:bg-white/30 text-white font-medium py-2 px-6 rounded-full text-sm transition-colors"
+                className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all"
               >
                 Create Group
               </button>
             </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-4">
+              {groups.map(group => (
+                <Link
+                  key={group.id}
+                  href={`/groups/${group.id}`}
+                  className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-all hover:scale-[1.02]"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-gray-900 mb-1">{group.name}</h3>
+                      {group.description && (
+                        <p className="text-sm text-gray-600">{group.description}</p>
+                      )}
+                    </div>
+                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <div>
+                      <div className="text-2xl font-bold text-orange-600">{group.prize_amount} {group.currency}</div>
+                      <div className="text-xs text-gray-500">Monthly Prize</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm text-gray-500">Tap to view details</div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
           )}
         </div>
+      </main>
 
-        {/* Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white/10 backdrop-blur-xl border-t border-white/20 z-20">
-          <div className="max-w-2xl mx-auto px-4 py-3 flex justify-around items-center">
-            <button className="flex flex-col items-center gap-1 text-white">
-              <div className="text-xl">⌂</div>
-              <div className="text-xs font-medium">Home</div>
-            </button>
-            <button
-              onClick={() => setShowCalendar(!showCalendar)}
-              className={`flex flex-col items-center gap-1 ${showCalendar ? 'text-white' : 'text-white/50'}`}
-            >
-              <div className="text-xl">◐</div>
-              <div className="text-xs">Calendar</div>
-            </button>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="flex flex-col items-center gap-1 bg-white/20 backdrop-blur-md px-6 py-2 rounded-full -mt-6"
-            >
-              <div className="text-2xl">+</div>
-            </button>
-            <button className="flex flex-col items-center gap-1 text-white/50">
-              <div className="text-xl">◉</div>
-              <div className="text-xs">Groups</div>
-            </button>
-            <button className="flex flex-col items-center gap-1 text-white/50">
-              <div className="text-xl">⚙</div>
-              <div className="text-xs">Settings</div>
-            </button>
+      {/* Create Group Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setShowCreateModal(false)}>
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Create New Group</h2>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Group Name
+                </label>
+                <input
+                  type="text"
+                  value={newGroup.name}
+                  onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })}
+                  placeholder="e.g., Family Fitness"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description (Optional)
+                </label>
+                <textarea
+                  value={newGroup.description}
+                  onChange={(e) => setNewGroup({ ...newGroup, description: e.target.value })}
+                  placeholder="What's this group about?"
+                  rows={3}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Monthly Prize Amount (DT)
+                </label>
+                <input
+                  type="number"
+                  value={newGroup.prizeAmount}
+                  onChange={(e) => setNewGroup({ ...newGroup, prizeAmount: parseInt(e.target.value) || 0 })}
+                  min="0"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                />
+                <p className="mt-1.5 text-xs text-gray-500">
+                  Each member contributes this amount to the monthly prize pool
+                </p>
+              </div>
+
+              <button
+                onClick={createGroup}
+                disabled={creating || !newGroup.name.trim()}
+                className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl"
+              >
+                {creating ? 'Creating...' : 'Create Group'}
+              </button>
+            </div>
           </div>
         </div>
-
-        {/* Create Group Modal */}
-        {showCreateModal && (
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl max-w-md w-full p-6">
-          <h2 className="text-xl font-semibold text-white mb-4">
-            Create New Group
-          </h2>
-
-          <div className="space-y-4 mb-6">
-            <div>
-              <label className="block text-sm font-medium text-white mb-1">
-                Group Name
-              </label>
-              <input
-                type="text"
-                value={newGroup.name}
-                onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })}
-                placeholder="e.g., Family Fitness"
-                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-purple-300 focus:ring-2 focus:ring-purple-400 focus:border-transparent"
-                autoFocus
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-white mb-1">
-                Description (optional)
-              </label>
-              <textarea
-                value={newGroup.description}
-                onChange={(e) => setNewGroup({ ...newGroup, description: e.target.value })}
-                placeholder="What's this group about?"
-                rows={2}
-                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-purple-300 focus:ring-2 focus:ring-purple-400 focus:border-transparent resize-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-white mb-1">
-                Prize Amount (DT)
-              </label>
-              <input
-                type="number"
-                value={newGroup.prizeAmount}
-                onChange={(e) => setNewGroup({ ...newGroup, prizeAmount: parseFloat(e.target.value) || 0 })}
-                min="0"
-                step="0.5"
-                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-purple-300 focus:ring-2 focus:ring-purple-400 focus:border-transparent"
-              />
-              <p className="text-xs text-purple-200 mt-1">
-                Each member contributes this amount
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-3">
-            <button
-              onClick={() => setShowCreateModal(false)}
-              disabled={creating}
-              className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white hover:bg-white/20 font-medium transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={createGroup}
-              disabled={creating || !newGroup.name.trim()}
-              className="flex-1 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 disabled:opacity-50 text-white rounded-xl font-medium transition-all"
-            >
-              {creating ? 'Creating...' : 'Create'}
-            </button>
-          </div>
-        </div>
-      </div>
-    )}
-      </div>
-
-      {/* CSS Animations */}
-      <style jsx global>{`
-        @keyframes blob {
-          0% {
-            transform: translate(0px, 0px) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-          100% {
-            transform: translate(0px, 0px) scale(1);
-          }
-        }
-
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-      `}</style>
+      )}
     </div>
   )
 }
-
