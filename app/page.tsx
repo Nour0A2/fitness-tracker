@@ -128,12 +128,7 @@ export default function Home() {
           <p className="text-sm sm:text-base md:text-lg text-purple-100 mb-6 sm:mb-8">
             Join thousands achieving their goals
           </p>
-          <Link 
-            href="/signup" 
-            className="inline-block px-8 py-4 bg-white text-purple-600 text-base sm:text-lg font-bold rounded-2xl shadow-xl hover:shadow-2xl transform active:scale-95 transition-all"
-          >
-            Get Started Free
-          </Link>
+  
         </div>
       </section>
 
