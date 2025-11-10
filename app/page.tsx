@@ -45,15 +45,7 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 max-w-md mx-auto sm:max-w-none">
-            <Link 
-              href="/signup" 
-              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-base sm:text-lg font-bold rounded-2xl shadow-xl hover:shadow-2xl transform active:scale-95 transition-all flex items-center justify-center"
-            >
-              Start Free
-              <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </Link>
+  
             <Link 
               href="/login" 
               className="w-full sm:w-auto px-8 py-4 bg-white text-gray-900 text-base sm:text-lg font-bold rounded-2xl border-2 border-gray-200 hover:border-purple-300 transform active:scale-95 transition-all flex items-center justify-center"
