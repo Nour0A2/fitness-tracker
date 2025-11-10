@@ -247,29 +247,29 @@ export default function DashboardPage() {
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-          <div className="text-gray-600 mt-4">Loading your dashboard...</div>
+          <div className="text-gray-600 mt-4 text-sm">Loading...</div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-lg border-b border-gray-100 sticky top-0 z-50">
-        <div className="px-6 py-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 pb-20">
+      {/* Header - Mobile Optimized */}
+      <header className="bg-white/90 backdrop-blur-lg border-b border-gray-100 sticky top-0 z-50">
+        <div className="px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between max-w-7xl mx-auto">
-            <div className="flex items-center space-x-3">
-              <div className="w-11 h-11 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="w-9 h-9 sm:w-11 sm:h-11 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">FitTrack</span>
+              <span className="text-base sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">FitTrack</span>
             </div>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium text-sm transition-colors rounded-lg hover:bg-gray-100"
+              className="px-3 py-1.5 sm:px-4 sm:py-2 text-gray-600 hover:text-gray-900 font-medium text-xs sm:text-sm transition-colors rounded-lg hover:bg-gray-100"
             >
               Sign out
             </button>
@@ -278,27 +278,24 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <div className="text-sm text-gray-600 mb-1">Good Morning 👋</div>
-          <h1 className="text-4xl font-black text-gray-900 mb-1">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+        {/* Welcome Section - Mobile Optimized */}
+        <div className="mb-4 sm:mb-6">
+          <div className="text-xs sm:text-sm text-gray-600 mb-1">Good Morning 👋</div>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900">
             {userName}
           </h1>
-          <p className="text-gray-600">
-            {user?.email}
-          </p>
         </div>
 
-        {/* Main Stats Card */}
-        <div className="bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-600 rounded-3xl p-8 text-white shadow-2xl mb-8">
+        {/* Main Stats Card - Mobile First */}
+        <div className="bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-600 rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 text-white shadow-2xl mb-4 sm:mb-6">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <div className="text-sm opacity-90 mb-2">Today's Progress</div>
-              <div className="text-5xl font-black mb-2">{stats.todaySteps.toLocaleString()}</div>
-              <div className="text-sm opacity-90">of 10,000 steps</div>
+              <div className="text-xs sm:text-sm opacity-90 mb-1 sm:mb-2">Today's Progress</div>
+              <div className="text-3xl sm:text-4xl md:text-5xl font-black mb-1 sm:mb-2">{stats.todaySteps.toLocaleString()}</div>
+              <div className="text-xs sm:text-sm opacity-90">of 10,000 steps</div>
               
-              <div className="mt-6 bg-white/20 backdrop-blur-sm rounded-full h-3 overflow-hidden">
+              <div className="mt-4 sm:mt-6 bg-white/20 backdrop-blur-sm rounded-full h-2 sm:h-3 overflow-hidden">
                 <div 
                   className="h-full bg-white rounded-full transition-all duration-500"
                   style={{ width: `${(stats.todaySteps / 10000) * 100}%` }}
@@ -306,114 +303,114 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="ml-8">
-              <div className="relative w-32 h-32">
-                <svg className="transform -rotate-90 w-32 h-32">
-                  <circle cx="64" cy="64" r="56" stroke="rgba(255,255,255,0.2)" strokeWidth="12" fill="none" />
+            <div className="ml-4 sm:ml-6 md:ml-8">
+              <div className="relative w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32">
+                <svg className="transform -rotate-90 w-full h-full">
+                  <circle cx="50%" cy="50%" r="35%" stroke="rgba(255,255,255,0.2)" strokeWidth="8" fill="none" />
                   <circle 
-                    cx="64" 
-                    cy="64" 
-                    r="56" 
+                    cx="50%" 
+                    cy="50%" 
+                    r="35%" 
                     stroke="white" 
-                    strokeWidth="12" 
+                    strokeWidth="8" 
                     fill="none" 
-                    strokeDasharray="351.86" 
-                    strokeDashoffset={351.86 - (351.86 * (stats.todaySteps / 10000))} 
+                    strokeDasharray="251.2" 
+                    strokeDashoffset={251.2 - (251.2 * (stats.todaySteps / 10000))} 
                     strokeLinecap="round"
                     className="transition-all duration-500"
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-3xl font-black">{Math.round((stats.todaySteps / 10000) * 100)}%</span>
-                  <span className="text-xs opacity-90">Complete</span>
+                  <span className="text-xl sm:text-2xl md:text-3xl font-black">{Math.round((stats.todaySteps / 10000) * 100)}%</span>
+                  <span className="text-xs opacity-90 hidden sm:block">Complete</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
-            <div className="text-4xl mb-3">🔥</div>
-            <div className="text-3xl font-black text-gray-900 mb-1">{stats.todayCalories}</div>
-            <div className="text-sm text-gray-600">Calories Burned</div>
+        {/* Stats Grid - Mobile Optimized */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-lg hover:shadow-xl transition-all">
+            <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">🔥</div>
+            <div className="text-2xl sm:text-3xl font-black text-gray-900 mb-0.5 sm:mb-1">{stats.todayCalories}</div>
+            <div className="text-xs sm:text-sm text-gray-600">Calories</div>
           </div>
 
-          <div className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
-            <div className="text-4xl mb-3">❤️</div>
-            <div className="text-3xl font-black text-gray-900 mb-1">{stats.heartRate}</div>
-            <div className="text-sm text-gray-600">Heart Rate (bpm)</div>
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-lg hover:shadow-xl transition-all">
+            <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">❤️</div>
+            <div className="text-2xl sm:text-3xl font-black text-gray-900 mb-0.5 sm:mb-1">{stats.heartRate}</div>
+            <div className="text-xs sm:text-sm text-gray-600">BPM</div>
           </div>
 
-          <div className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
-            <div className="text-4xl mb-3">📍</div>
-            <div className="text-3xl font-black text-gray-900 mb-1">{stats.todayDistance}</div>
-            <div className="text-sm text-gray-600">Distance (km)</div>
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-lg hover:shadow-xl transition-all">
+            <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">📍</div>
+            <div className="text-2xl sm:text-3xl font-black text-gray-900 mb-0.5 sm:mb-1">{stats.todayDistance}</div>
+            <div className="text-xs sm:text-sm text-gray-600">KM</div>
           </div>
 
-          <div className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
-            <div className="text-4xl mb-3">⏱️</div>
-            <div className="text-3xl font-black text-gray-900 mb-1">45</div>
-            <div className="text-sm text-gray-600">Minutes Active</div>
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-lg hover:shadow-xl transition-all">
+            <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">⏱️</div>
+            <div className="text-2xl sm:text-3xl font-black text-gray-900 mb-0.5 sm:mb-1">45</div>
+            <div className="text-xs sm:text-sm text-gray-600">Minutes</div>
           </div>
         </div>
 
-        {/* Two Column Layout */}
-        <div className="grid lg:grid-cols-3 gap-8">
+        {/* Two Column Layout - Mobile Stacked */}
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Left Column - Streak & Activity */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Streak Stats */}
-            <div className="bg-white rounded-3xl p-6 shadow-lg">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Your Streaks</h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-6">
-                  <div className="text-4xl mb-3">�</div>
-                  <div className="text-4xl font-black text-gray-900 mb-1">{stats.currentStreak}</div>
-                  <div className="text-sm text-gray-600">Current Streak (days)</div>
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
+            {/* Streak Stats - Mobile Optimized */}
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-lg">
+              <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-3 sm:mb-4 md:mb-6">Streaks</h2>
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6">
+                  <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">🔥</div>
+                  <div className="text-3xl sm:text-4xl font-black text-gray-900 mb-0.5 sm:mb-1">{stats.currentStreak}</div>
+                  <div className="text-xs sm:text-sm text-gray-600">Day Streak</div>
                 </div>
 
-                <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6">
-                  <div className="text-4xl mb-3">📅</div>
-                  <div className="text-4xl font-black text-gray-900 mb-1">{stats.activeDaysThisMonth}</div>
-                  <div className="text-sm text-gray-600">Active Days This Month</div>
+                <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6">
+                  <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">📅</div>
+                  <div className="text-3xl sm:text-4xl font-black text-gray-900 mb-0.5 sm:mb-1">{stats.activeDaysThisMonth}</div>
+                  <div className="text-xs sm:text-sm text-gray-600">Active Days</div>
                 </div>
               </div>
             </div>
 
-            {/* Calendar */}
+            {/* Calendar - Mobile Optimized */}
             {calendarDays.length > 0 && (
-              <div className="bg-white rounded-3xl p-6 shadow-lg">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Activity Calendar</h2>
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-lg">
+                <div className="flex items-center justify-between mb-3 sm:mb-4 md:mb-6">
+                  <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900">Calendar</h2>
                   <button
                     onClick={() => setShowCalendar(!showCalendar)}
-                    className="text-sm text-purple-600 hover:text-purple-700 font-semibold"
+                    className="text-xs sm:text-sm text-purple-600 hover:text-purple-700 font-semibold"
                   >
-                    {showCalendar ? 'Hide' : 'Show'} Calendar
+                    {showCalendar ? 'Hide' : 'Show'}
                   </button>
                 </div>
 
                 {showCalendar && (
                   <div>
-                    <div className="grid grid-cols-7 gap-2 mb-3">
+                    <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2 sm:mb-3">
                       {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                        <div key={day} className="text-center text-xs font-bold text-gray-500 py-2">
+                        <div key={day} className="text-center text-xs font-bold text-gray-500 py-1 sm:py-2">
                           {day}
                         </div>
                       ))}
                     </div>
-                    <div className="grid grid-cols-7 gap-2">
+                    <div className="grid grid-cols-7 gap-1 sm:gap-2">
                       {calendarDays.map((day, index) => (
                         <div
                           key={index}
                           className={`
-                            aspect-square rounded-xl flex items-center justify-center text-sm font-bold transition-all
+                            aspect-square rounded-lg sm:rounded-xl flex items-center justify-center text-xs sm:text-sm font-bold transition-all
                             ${!day.isCurrentMonth ? 'text-gray-300 bg-gray-50' : 
                               day.isActive ? 'bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-lg transform scale-105' :
                               day.isToday ? 'bg-purple-100 text-purple-900 ring-2 ring-purple-500' :
                               'bg-gray-100 text-gray-700 hover:bg-gray-200'}
-                      `}
+                          `}
                         >
                           {day.date.getDate()}
                         </div>
@@ -425,41 +422,41 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* Right Column - Groups */}
+          {/* Right Column - Groups - Mobile Optimized */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-3xl p-6 shadow-lg">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">Your Groups</h2>
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-lg">
+              <div className="flex items-center justify-between mb-3 sm:mb-4 md:mb-6">
+                <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900">Groups</h2>
                 <button
                   onClick={() => setShowCreateModal(true)}
-                  className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 text-white rounded-xl flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-110 transition-all"
+                  className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-600 to-blue-600 text-white rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-110 transition-all"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
                 </button>
               </div>
 
               {groups.length === 0 ? (
-                <div className="text-center py-8">
-                  <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-10 h-10 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="text-center py-6 sm:py-8">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <svg className="w-8 h-8 sm:w-10 sm:h-10 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-sm font-bold text-gray-900 mb-2">No Groups Yet</h3>
-                  <p className="text-xs text-gray-600 mb-4">
-                    Create your first group
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1 sm:mb-2">No Groups</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
+                    Create your first
                   </p>
                   <button
                     onClick={() => setShowCreateModal(true)}
-                    className="text-sm px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                    className="text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transition-all"
                   >
-                    Create Group
+                    Create
                   </button>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {groups.map(group => (
                     <Link
                       key={group.id}

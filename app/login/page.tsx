@@ -119,9 +119,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center">
-        {/* Left Side - Branding */}
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 flex items-center justify-center p-4 sm:p-6">
+      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        {/* Left Side - Branding - Hide on Mobile */}
         <div className="hidden lg:block">
           <Link href="/" className="inline-flex items-center space-x-3 mb-8">
             <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
@@ -174,40 +174,40 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Right Side - Form */}
+        {/* Right Side - Form - Mobile Optimized */}
         <div className="w-full max-w-md mx-auto">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 lg:p-10">
+          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10">
             {/* Mobile Logo */}
-            <div className="lg:hidden text-center mb-8">
-              <Link href="/" className="inline-flex items-center space-x-2 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="lg:hidden text-center mb-6 sm:mb-8">
+              <Link href="/" className="inline-flex items-center space-x-2 mb-3 sm:mb-4">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
-                <span className="text-xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">FitTrack</span>
+                <span className="text-lg sm:text-xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">FitTrack</span>
               </Link>
             </div>
 
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-black text-gray-900 mb-2">
+            <div className="text-center mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mb-1 sm:mb-2">
                 Welcome Back
               </h1>
-              <p className="text-gray-600">
-                Sign in to continue your fitness journey
+              <p className="text-sm sm:text-base text-gray-600">
+                Sign in to continue
               </p>
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-5">
+            <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
               {error && (
-                <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium">
+                <div className="bg-red-50 border-2 border-red-200 text-red-700 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm font-medium">
                   {error}
                 </div>
               )}
 
               <div>
-                <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-2">
-                  Email Address
+                <label htmlFor="email" className="block text-xs sm:text-sm font-bold text-gray-700 mb-1 sm:mb-2">
+                  Email
                 </label>
                 <input
                   id="email"
@@ -215,13 +215,13 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  className="w-full px-3 py-3 sm:px-4 sm:py-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-sm sm:text-base"
                   placeholder="you@example.com"
                 />
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-bold text-gray-700 mb-2">
+                <label htmlFor="password" className="block text-xs sm:text-sm font-bold text-gray-700 mb-1 sm:mb-2">
                   Password
                 </label>
                 <input
@@ -230,15 +230,15 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  placeholder="Enter your password"
+                  className="w-full px-3 py-3 sm:px-4 sm:py-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-sm sm:text-base"
+                  placeholder="Enter password"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 px-4 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 sm:py-4 px-4 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 text-sm sm:text-base"
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
@@ -252,8 +252,8 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <div className="mt-6 text-center">
-              <p className="text-gray-600">
+            <div className="mt-5 sm:mt-6 text-center">
+              <p className="text-sm sm:text-base text-gray-600">
                 Don't have an account?{' '}
                 <Link href="/signup" className="text-purple-600 hover:text-purple-700 font-bold transition-colors">
                   Sign up
