@@ -64,18 +64,8 @@ export default function Home() {
 
           {/* Stats - Mobile Optimized */}
           <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-12 sm:pt-16 max-w-2xl mx-auto">
-            <div>
-              <div className="text-3xl sm:text-4xl font-black text-gray-900">10K+</div>
-              <div className="text-xs sm:text-sm text-gray-600">Users</div>
-            </div>
-            <div>
-              <div className="text-3xl sm:text-4xl font-black text-gray-900">50K+</div>
-              <div className="text-xs sm:text-sm text-gray-600">Workouts</div>
-            </div>
-            <div>
-              <div className="text-3xl sm:text-4xl font-black text-gray-900">4.8★</div>
-              <div className="text-xs sm:text-sm text-gray-600">Rating</div>
-            </div>
+
+        
           </div>
         </div>
       </section>
