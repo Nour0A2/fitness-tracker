@@ -5,13 +5,130 @@ import { useState, useEffect } from 'react'
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0)
-  const [activeFeature, setActiveFeature] = useState(0)
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  return (
+    <div className="min-h-screen bg-white overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-orange-300 to-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div className="absolute top-40 -left-40 w-96 h-96 bg-gradient-to-br from-purple-300 to-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-40 left-1/2 w-96 h-96 bg-gradient-to-br from-yellow-300 to-orange-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+      </div>
+
+      {/* Header */}
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrollY > 50 ? 'bg-white/90 backdrop-blur-lg shadow-lg' : 'bg-transparent'}`}>
+        <div className="max-w-7xl mx-auto px-6 py-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3 group">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl blur group-hover:blur-lg opacity-75 transition-all"></div>
+                <div className="relative w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg transform group-hover:scale-110 group-hover:rotate-6 transition-transform">
+                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+              </div>
+              <span className="text-2xl font-black bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent tracking-tight">FitTrack</span>
+            </div>
+            <Link 
+              href="/login" 
+              className="px-6 py-2.5 text-gray-700 hover:text-gray-900 font-semibold transition-colors rounded-xl hover:bg-gray-100 transform hover:scale-105 transition-transform"
+            >
+              Sign in
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center px-6">
+        <div className="max-w-5xl mx-auto text-center">
+          <h1 className="text-7xl md:text-8xl font-black leading-tight mb-8">
+            <span className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Get Fit</span>
+            <br />
+            <span className="bg-gradient-to-r from-orange-600 via-red-600 to-pink-600 bg-clip-text text-transparent animate-gradient">Together</span>
+          </h1>
+          
+          <p className="text-2xl text-gray-600 mb-12 max-w-2xl mx-auto">
+            Track, compete, stay consistent
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <Link 
+              href="/signup" 
+              className="group relative inline-flex items-center justify-center px-10 py-5 text-xl font-bold text-white rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 animate-gradient"></div>
+              <span className="relative flex items-center">
+                Start Free
+                <svg className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
+            </Link>
+            <Link 
+              href="/login" 
+              className="inline-flex items-center justify-center px-10 py-5 text-xl font-bold text-gray-900 bg-white border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl hover:border-gray-300 transform hover:scale-105 transition-all"
+            >
+              Sign In
+            </Link>
+          </div>
+
+          {/* Simple Feature Icons */}
+          <div className="flex items-center justify-center gap-12">
+            <div className="group cursor-pointer">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-3 transform group-hover:scale-110 group-hover:rotate-6 transition-all shadow-xl">
+                <span className="text-4xl">👥</span>
+              </div>
+              <p className="text-sm font-semibold text-gray-600">Groups</p>
+            </div>
+            <div className="group cursor-pointer">
+              <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mb-3 transform group-hover:scale-110 group-hover:rotate-6 transition-all shadow-xl">
+                <span className="text-4xl">🔥</span>
+              </div>
+              <p className="text-sm font-semibold text-gray-600">Streaks</p>
+            </div>
+            <div className="group cursor-pointer">
+              <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-3 transform group-hover:scale-110 group-hover:rotate-6 transition-all shadow-xl">
+                <span className="text-4xl">🏆</span>
+              </div>
+              <p className="text-sm font-semibold text-gray-600">Win</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Bar */}
+      <section className="py-16 px-6 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500">
+        <div className="max-w-7xl mx-auto grid grid-cols-3 gap-8 text-center text-white">
+          <div className="transform hover:scale-110 transition-transform">
+            <div className="text-5xl font-black mb-1">1K+</div>
+            <div className="text-orange-100">Members</div>
+          </div>
+          <div className="transform hover:scale-110 transition-transform">
+            <div className="text-5xl font-black mb-1">50K+</div>
+            <div className="text-orange-100">Workouts</div>
+          </div>
+          <div className="transform hover:scale-110 transition-transform">
+            <div className="text-5xl font-black mb-1">200+</div>
+            <div className="text-orange-100">Groups</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-8 px-6 bg-gray-50 text-center text-gray-600 text-sm">
+        © 2025 FitTrack
+      </footer>
+    </div>
+  );
+}
 
   const features = [
     {
