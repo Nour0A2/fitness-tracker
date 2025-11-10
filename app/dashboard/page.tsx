@@ -19,6 +19,10 @@ interface Stats {
   currentStreak: number
   groupCount: number
   activeDaysThisMonth: number
+  todaySteps: number
+  todayCalories: number
+  todayDistance: number
+  heartRate: number
 }
 
 interface CalendarDay {
@@ -32,7 +36,15 @@ export default function DashboardPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const [groups, setGroups] = useState<Group[]>([])
-  const [stats, setStats] = useState<Stats>({ currentStreak: 0, groupCount: 0, activeDaysThisMonth: 0 })
+  const [stats, setStats] = useState<Stats>({ 
+    currentStreak: 0, 
+    groupCount: 0, 
+    activeDaysThisMonth: 0,
+    todaySteps: 2847,
+    todayCalories: 245,
+    todayDistance: 3.2,
+    heartRate: 128
+  })
   const [loading, setLoading] = useState(true)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [newGroup, setNewGroup] = useState({ name: '', description: '', prizeAmount: 5 })
@@ -40,6 +52,7 @@ export default function DashboardPage() {
   const [markedToday, setMarkedToday] = useState(false)
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([])
   const [showCalendar, setShowCalendar] = useState(false)
+  const [userName, setUserName] = useState('Guest')
 
   useEffect(() => {
     loadDashboardData()
@@ -158,7 +171,11 @@ export default function DashboardPage() {
     setStats({
       currentStreak: maxStreak,
       groupCount: userGroups.length,
-      activeDaysThisMonth: activeDays
+      activeDaysThisMonth: activeDays,
+      todaySteps: 2847,
+      todayCalories: 245,
+      todayDistance: 3.2,
+      heartRate: 128
     })
 
     setLoading(false)
@@ -227,32 +244,32 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
-          <div className="text-gray-600 mt-4">Loading...</div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          <div className="text-gray-600 mt-4">Loading your dashboard...</div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-white/80 backdrop-blur-lg border-b border-gray-100 sticky top-0 z-50">
         <div className="px-6 py-4">
-          <div className="flex items-center justify-between max-w-6xl mx-auto">
-            <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-md">
+          <div className="flex items-center justify-between max-w-7xl mx-auto">
+            <div className="flex items-center space-x-3">
+              <div className="w-11 h-11 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <span className="text-xl font-bold text-gray-900">FitTrack</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">FitTrack</span>
             </div>
             <button
               onClick={handleLogout}
-              className="text-gray-600 hover:text-gray-900 font-medium text-sm transition-colors"
+              className="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium text-sm transition-colors rounded-lg hover:bg-gray-100"
             >
               Sign out
             </button>
@@ -261,168 +278,227 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-6 py-8">
+      <main className="max-w-7xl mx-auto px-6 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back!
+          <div className="text-sm text-gray-600 mb-1">Good Morning 👋</div>
+          <h1 className="text-4xl font-black text-gray-900 mb-1">
+            {userName}
           </h1>
           <p className="text-gray-600">
             {user?.email}
           </p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-2xl">🔥</span>
+        {/* Main Stats Card */}
+        <div className="bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-600 rounded-3xl p-8 text-white shadow-2xl mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <div className="text-sm opacity-90 mb-2">Today's Progress</div>
+              <div className="text-5xl font-black mb-2">{stats.todaySteps.toLocaleString()}</div>
+              <div className="text-sm opacity-90">of 10,000 steps</div>
+              
+              <div className="mt-6 bg-white/20 backdrop-blur-sm rounded-full h-3 overflow-hidden">
+                <div 
+                  className="h-full bg-white rounded-full transition-all duration-500"
+                  style={{ width: `${(stats.todaySteps / 10000) * 100}%` }}
+                ></div>
+              </div>
             </div>
-            <div className="text-3xl font-bold text-gray-900 mb-1">{stats.currentStreak}</div>
-            <div className="text-sm text-gray-600">Day Streak</div>
-          </div>
 
-          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-2xl">📅</span>
+            <div className="ml-8">
+              <div className="relative w-32 h-32">
+                <svg className="transform -rotate-90 w-32 h-32">
+                  <circle cx="64" cy="64" r="56" stroke="rgba(255,255,255,0.2)" strokeWidth="12" fill="none" />
+                  <circle 
+                    cx="64" 
+                    cy="64" 
+                    r="56" 
+                    stroke="white" 
+                    strokeWidth="12" 
+                    fill="none" 
+                    strokeDasharray="351.86" 
+                    strokeDashoffset={351.86 - (351.86 * (stats.todaySteps / 10000))} 
+                    strokeLinecap="round"
+                    className="transition-all duration-500"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-3xl font-black">{Math.round((stats.todaySteps / 10000) * 100)}%</span>
+                  <span className="text-xs opacity-90">Complete</span>
+                </div>
+              </div>
             </div>
-            <div className="text-3xl font-bold text-gray-900 mb-1">{stats.activeDaysThisMonth}</div>
-            <div className="text-sm text-gray-600">Active Days</div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-2xl">👥</span>
-            </div>
-            <div className="text-3xl font-bold text-gray-900 mb-1">{stats.groupCount}</div>
-            <div className="text-sm text-gray-600">Groups</div>
           </div>
         </div>
 
-        {/* Calendar Card */}
-        {calendarDays.length > 0 && (
-          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-gray-900">Your Activity</h2>
-              <button
-                onClick={() => setShowCalendar(!showCalendar)}
-                className="text-sm text-orange-600 hover:text-orange-700 font-medium"
-              >
-                {showCalendar ? 'Hide' : 'View'} Calendar
-              </button>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-4 gap-4 mb-8">
+          <div className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+            <div className="text-4xl mb-3">🔥</div>
+            <div className="text-3xl font-black text-gray-900 mb-1">{stats.todayCalories}</div>
+            <div className="text-sm text-gray-600">Calories Burned</div>
+          </div>
+
+          <div className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+            <div className="text-4xl mb-3">❤️</div>
+            <div className="text-3xl font-black text-gray-900 mb-1">{stats.heartRate}</div>
+            <div className="text-sm text-gray-600">Heart Rate (bpm)</div>
+          </div>
+
+          <div className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+            <div className="text-4xl mb-3">📍</div>
+            <div className="text-3xl font-black text-gray-900 mb-1">{stats.todayDistance}</div>
+            <div className="text-sm text-gray-600">Distance (km)</div>
+          </div>
+
+          <div className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+            <div className="text-4xl mb-3">⏱️</div>
+            <div className="text-3xl font-black text-gray-900 mb-1">45</div>
+            <div className="text-sm text-gray-600">Minutes Active</div>
+          </div>
+        </div>
+
+        {/* Two Column Layout */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Left Column - Streak & Activity */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Streak Stats */}
+            <div className="bg-white rounded-3xl p-6 shadow-lg">
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Your Streaks</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-6">
+                  <div className="text-4xl mb-3">�</div>
+                  <div className="text-4xl font-black text-gray-900 mb-1">{stats.currentStreak}</div>
+                  <div className="text-sm text-gray-600">Current Streak (days)</div>
+                </div>
+
+                <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6">
+                  <div className="text-4xl mb-3">📅</div>
+                  <div className="text-4xl font-black text-gray-900 mb-1">{stats.activeDaysThisMonth}</div>
+                  <div className="text-sm text-gray-600">Active Days This Month</div>
+                </div>
+              </div>
             </div>
 
-            {showCalendar && (
-              <div>
-                <div className="grid grid-cols-7 gap-2 mb-2">
-                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                    <div key={day} className="text-center text-xs font-medium text-gray-500 py-2">
-                      {day}
-                    </div>
-                  ))}
+            {/* Calendar */}
+            {calendarDays.length > 0 && (
+              <div className="bg-white rounded-3xl p-6 shadow-lg">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-gray-900">Activity Calendar</h2>
+                  <button
+                    onClick={() => setShowCalendar(!showCalendar)}
+                    className="text-sm text-purple-600 hover:text-purple-700 font-semibold"
+                  >
+                    {showCalendar ? 'Hide' : 'Show'} Calendar
+                  </button>
                 </div>
-                <div className="grid grid-cols-7 gap-2">
-                  {calendarDays.map((day, index) => (
-                    <div
-                      key={index}
-                      className={`
-                        aspect-square rounded-xl flex items-center justify-center text-sm font-medium
-                        ${!day.isCurrentMonth ? 'text-gray-300' : 
-                          day.isActive ? 'bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-md' :
-                          day.isToday ? 'bg-gray-100 text-gray-900 ring-2 ring-orange-500' :
-                          'bg-gray-50 text-gray-700'}
+
+                {showCalendar && (
+                  <div>
+                    <div className="grid grid-cols-7 gap-2 mb-3">
+                      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                        <div key={day} className="text-center text-xs font-bold text-gray-500 py-2">
+                          {day}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="grid grid-cols-7 gap-2">
+                      {calendarDays.map((day, index) => (
+                        <div
+                          key={index}
+                          className={`
+                            aspect-square rounded-xl flex items-center justify-center text-sm font-bold transition-all
+                            ${!day.isCurrentMonth ? 'text-gray-300 bg-gray-50' : 
+                              day.isActive ? 'bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-lg transform scale-105' :
+                              day.isToday ? 'bg-purple-100 text-purple-900 ring-2 ring-purple-500' :
+                              'bg-gray-100 text-gray-700 hover:bg-gray-200'}
                       `}
-                    >
-                      {day.date.getDate()}
+                        >
+                          {day.date.getDate()}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-                <div className="flex items-center gap-6 mt-6 text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-gradient-to-br from-orange-500 to-red-500 rounded"></div>
-                    <span className="text-gray-600">Active Day</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-gray-100 ring-2 ring-orange-500 rounded"></div>
-                    <span className="text-gray-600">Today</span>
-                  </div>
-                </div>
+                )}
               </div>
             )}
           </div>
-        )}
 
-        {/* Groups Section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Your Groups</h2>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-            >
-              + New Group
-            </button>
-          </div>
-
-          {groups.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 border border-gray-100 shadow-sm text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No groups yet</h3>
-              <p className="text-gray-600 mb-6">
-                Create your first group to start tracking with friends
-              </p>
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all"
-              >
-                Create Group
-              </button>
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 gap-4">
-              {groups.map(group => (
-                <Link
-                  key={group.id}
-                  href={`/groups/${group.id}`}
-                  className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-all hover:scale-[1.02]"
+          {/* Right Column - Groups */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-3xl p-6 shadow-lg">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-900">Your Groups</h2>
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 text-white rounded-xl flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-110 transition-all"
                 >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-gray-900 mb-1">{group.name}</h3>
-                      {group.description && (
-                        <p className="text-sm text-gray-600">{group.description}</p>
-                      )}
-                    </div>
-                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                </button>
+              </div>
+
+              {groups.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-10 h-10 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                   </div>
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div>
-                      <div className="text-2xl font-bold text-orange-600">{group.prize_amount} {group.currency}</div>
-                      <div className="text-xs text-gray-500">Monthly Prize</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm text-gray-500">Tap to view details</div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+                  <h3 className="text-sm font-bold text-gray-900 mb-2">No Groups Yet</h3>
+                  <p className="text-xs text-gray-600 mb-4">
+                    Create your first group
+                  </p>
+                  <button
+                    onClick={() => setShowCreateModal(true)}
+                    className="text-sm px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                  >
+                    Create Group
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {groups.map(group => (
+                    <Link
+                      key={group.id}
+                      href={`/groups/${group.id}`}
+                      className="block bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-4 hover:shadow-lg transition-all transform hover:scale-105"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-lg font-bold text-gray-900">{group.name}</h3>
+                        <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                      {group.description && (
+                        <p className="text-xs text-gray-600 mb-3">{group.description}</p>
+                      )}
+                      <div className="flex items-center justify-between pt-3 border-t border-purple-100">
+                        <div>
+                          <div className="text-xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                            {group.prize_amount} {group.currency}
+                          </div>
+                          <div className="text-xs text-gray-500">Prize</div>
+                        </div>
+                        <div className="text-xs text-gray-500">👥 View</div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </main>
 
       {/* Create Group Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setShowCreateModal(false)}>
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50" onClick={() => setShowCreateModal(false)}>
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Create New Group</h2>
+              <h2 className="text-2xl font-black text-gray-900">Create New Group</h2>
               <button
                 onClick={() => setShowCreateModal(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -435,7 +511,7 @@ export default function DashboardPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-gray-700 mb-2">
                   Group Name
                 </label>
                 <input
@@ -443,12 +519,12 @@ export default function DashboardPage() {
                   value={newGroup.name}
                   onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })}
                   placeholder="e.g., Family Fitness"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-gray-700 mb-2">
                   Description (Optional)
                 </label>
                 <textarea
@@ -456,12 +532,12 @@ export default function DashboardPage() {
                   onChange={(e) => setNewGroup({ ...newGroup, description: e.target.value })}
                   placeholder="What's this group about?"
                   rows={3}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-gray-700 mb-2">
                   Monthly Prize Amount (DT)
                 </label>
                 <input
@@ -469,9 +545,9 @@ export default function DashboardPage() {
                   value={newGroup.prizeAmount}
                   onChange={(e) => setNewGroup({ ...newGroup, prizeAmount: parseInt(e.target.value) || 0 })}
                   min="0"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 />
-                <p className="mt-1.5 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-gray-500">
                   Each member contributes this amount to the monthly prize pool
                 </p>
               </div>
@@ -479,7 +555,7 @@ export default function DashboardPage() {
               <button
                 onClick={createGroup}
                 disabled={creating || !newGroup.name.trim()}
-                className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl"
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 {creating ? 'Creating...' : 'Create Group'}
               </button>

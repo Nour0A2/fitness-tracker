@@ -119,98 +119,147 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      {/* Header */}
-      <div className="px-6 pt-8 pb-6">
-        <Link href="/" className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors">
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back
-        </Link>
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 pb-12">
-        <div className="w-full max-w-sm">
-          {/* Logo/Icon */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl mb-4 shadow-lg">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 flex items-center justify-center p-6">
+      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center">
+        {/* Left Side - Branding */}
+        <div className="hidden lg:block">
+          <Link href="/" className="inline-flex items-center space-x-3 mb-8">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Welcome Back
-            </h1>
-            <p className="text-gray-500">
-              Sign in to continue your fitness journey
-            </p>
-          </div>
+            <span className="text-2xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">FitTrack</span>
+          </Link>
+          
+          <h2 className="text-5xl font-black text-gray-900 mb-6">
+            Track Your<br />
+            <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              Fitness Goals
+            </span>
+          </h2>
+          
+          <p className="text-xl text-gray-600 mb-8">
+            Monitor workouts, build streaks, and achieve your fitness goals with friends.
+          </p>
 
-          {/* Form */}
-          <form onSubmit={handleLogin} className="space-y-4">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-                {error}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                <span className="text-2xl">📊</span>
               </div>
-            )}
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-                placeholder="you@example.com"
-              />
+              <div>
+                <div className="font-bold text-gray-900">Activity Tracking</div>
+                <div className="text-sm text-gray-600">Monitor your daily progress</div>
+              </div>
             </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-                placeholder="Enter your password"
-              />
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                <span className="text-2xl">🔥</span>
+              </div>
+              <div>
+                <div className="font-bold text-gray-900">Build Streaks</div>
+                <div className="text-sm text-gray-600">Stay consistent every day</div>
+              </div>
             </div>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+                <span className="text-2xl">👥</span>
+              </div>
+              <div>
+                <div className="font-bold text-gray-900">Join Groups</div>
+                <div className="text-sm text-gray-600">Compete with friends</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 px-4 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        {/* Right Side - Form */}
+        <div className="w-full max-w-md mx-auto">
+          <div className="bg-white rounded-3xl shadow-2xl p-8 lg:p-10">
+            {/* Mobile Logo */}
+            <div className="lg:hidden text-center mb-8">
+              <Link href="/" className="inline-flex items-center space-x-2 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
-                  Logging in...
-                </span>
-              ) : 'Sign In'}
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              Don't have an account?{' '}
-              <Link href="/signup" className="text-orange-600 hover:text-orange-700 font-semibold transition-colors">
-                Sign up
+                </div>
+                <span className="text-xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">FitTrack</span>
               </Link>
-            </p>
+            </div>
+
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-black text-gray-900 mb-2">
+                Welcome Back
+              </h1>
+              <p className="text-gray-600">
+                Sign in to continue your fitness journey
+              </p>
+            </div>
+
+            <form onSubmit={handleLogin} className="space-y-5">
+              {error && (
+                <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium">
+                  {error}
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  placeholder="you@example.com"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-bold text-gray-700 mb-2">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  placeholder="Enter your password"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 px-4 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Logging in...
+                  </span>
+                ) : 'Sign In'}
+              </button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-gray-600">
+                Don't have an account?{' '}
+                <Link href="/signup" className="text-purple-600 hover:text-purple-700 font-bold transition-colors">
+                  Sign up
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
       </div>
