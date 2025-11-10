@@ -18,12 +18,8 @@ export default function Home() {
               <span className="text-lg sm:text-2xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">FitTrack</span>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
-              <Link href="/login" className="px-3 py-2 sm:px-6 sm:py-2.5 text-sm sm:text-base text-gray-700 hover:text-gray-900 font-semibold transition-colors rounded-lg sm:rounded-xl">
-                Sign In
-              </Link>
-              <Link href="/signup" className="px-3 py-2 sm:px-6 sm:py-2.5 text-sm sm:text-base bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all">
-                Start
-              </Link>
+      
+          
             </div>
           </div>
         </div>
@@ -123,7 +119,7 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <span className="text-lg font-black">FitTrack</span>
+           
           </div>
           <div className="text-gray-400 text-sm">
             © 2025 FitTrack
